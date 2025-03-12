@@ -5,6 +5,11 @@ import keytar from "keytar";
 import { setClockodoData, setJiraToken } from "./utils/auth";
 import { MainMode } from "./types/modes";
 import { Account } from "./types/auth";
+import { development } from "./funcs/development";
+import { meeting } from "./funcs/meeting";
+import { manual } from "./funcs/manual";
+import { absence } from "./funcs/absence";
+import { exit } from "./funcs/exit";
 
 // Add global handler for unhandled promise rejections
 process.on("unhandledRejection", (reason: any) => {
@@ -44,13 +49,23 @@ program.action(async () => {
     },
   ]);
 
-  if (mode === MainMode.Logout) {
-    await keytar.deletePassword("clockodo-cli", Account.ApiKey);
-    await keytar.deletePassword("clockodo-cli", Account.Email);
-    console.log("Logged out.");
+  switch (mode) {
+    case MainMode.Development:
+      await development();
+      break;
+    case MainMode.Meeting:
+      await meeting();
+      break;
+    case MainMode.Manual:
+      await manual();
+      break;
+    case MainMode.Absence:
+      await absence();
+      break;
+    case MainMode.Exit:
+      await exit();
+      break;
   }
-
-  console.log(mode);
 });
 
 program.parse(process.argv);
