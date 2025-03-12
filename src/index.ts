@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { program } from "commander";
 import inquirer from "inquirer";
-import "dotenv/config";
 
 // Add global handler for unhandled promise rejections
 process.on("unhandledRejection", (reason: any) => {
