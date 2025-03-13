@@ -3,14 +3,14 @@ import { program } from "commander";
 import inquirer from "inquirer";
 import keytar from "keytar";
 import { setClockodoData, setJiraToken } from "./utils/auth";
-import { Account } from "./types/config";
+import { Account, Storage } from "./types/config";
 import { development } from "./funcs/development";
 import { meeting } from "./funcs/meeting";
 import { manual } from "./funcs/manual";
 import { absence } from "./funcs/absence";
 import { exit } from "./funcs/exit";
 import { Clockodo } from "clockodo";
-import { setDefaultData } from "./utils/config";
+import storage from "node-persist";
 
 enum Mode {
   Development = "Development",
@@ -35,13 +35,10 @@ process.on("unhandledRejection", (reason: any) => {
 });
 
 program.action(async () => {
+  await storage.init();
   const apiKey = await keytar.getPassword("clockodo-cli", Account.ApiKey);
   const email = await keytar.getPassword("clockodo-cli", Account.Email);
   const jiraToken = await keytar.getPassword("clockodo-cli", Account.JiraToken);
-  const defaultCustomer = await keytar.getPassword(
-    "clockodo-cli",
-    Account.DefaultCustomer
-  );
 
   if (apiKey === null || email === null) {
     console.log("No Clockodo API key found. Please log in.");
@@ -64,11 +61,6 @@ program.action(async () => {
       apiKey,
     },
   });
-
-  if (defaultCustomer === null) {
-    console.log("Please configure your default customer.");
-    await setDefaultData({ clockodo });
-  }
 
   const { mode }: { mode: Mode } = await inquirer.prompt([
     {
@@ -99,7 +91,7 @@ program.action(async () => {
       await keytar.deletePassword("clockodo-cli", Account.ApiKey);
       await keytar.deletePassword("clockodo-cli", Account.Email);
       await keytar.deletePassword("clockodo-cli", Account.JiraToken);
-      await keytar.deletePassword("clockodo-cli", Account.DefaultCustomer);
+      await storage.removeItem(Storage.DefaultCustomer);
       console.log("Logged out successfully");
       break;
     }

@@ -1,18 +1,14 @@
 import { ClockodoProp } from "../types/clockodo";
 import { search } from "@inquirer/prompts";
 import inquirer from "inquirer";
-import { getDefaultCustomer } from "../utils/defaults";
+import { getDefaultCustomer, getMeetingServiceId } from "../utils/defaults";
+import storage from "node-persist";
+import { Storage } from "../types/config";
 
 enum Mode {
   Preset = "Preset",
   Call = "Call",
   Manual = "Manual",
-}
-
-enum Presets {
-  Daily = "Daily",
-  Refinement = "Refinement",
-  Sprintwechsel = "Sprintwechsel",
 }
 
 export const meeting = async ({ clockodo }: ClockodoProp) => {
@@ -39,7 +35,8 @@ export const meeting = async ({ clockodo }: ClockodoProp) => {
 };
 
 const preset = async ({ clockodo }: ClockodoProp) => {
-  const customersId = await getDefaultCustomer();
+  const presets = await storage.getItem(Storage.MeetingPresets);
+  const customersId = await getDefaultCustomer({ clockodo });
   const servicesId = process.env.SERVICE_ID_MEETING;
 
   const { text } = await inquirer.prompt([
@@ -47,20 +44,20 @@ const preset = async ({ clockodo }: ClockodoProp) => {
       type: "list",
       name: "text",
       message: "Select a preset",
-      choices: Object.values(Presets),
+      choices: presets,
     },
   ]);
 
   await clockodo.startClock({
-    customersId: Number(customersId),
+    customersId,
     servicesId: Number(servicesId),
     text,
   });
 };
 
 const call = async ({ clockodo }: ClockodoProp) => {
-  const customersId = await getDefaultCustomer();
-  const servicesId = process.env.SERVICE_ID_MEETING;
+  const customersId = await getDefaultCustomer({ clockodo });
+  const servicesId = await getMeetingServiceId({ clockodo });
   const { users } = await clockodo.getUsers({ filterActive: true });
 
   const user = await search({
@@ -81,15 +78,15 @@ const call = async ({ clockodo }: ClockodoProp) => {
   });
 
   await clockodo.startClock({
-    customersId: Number(customersId),
+    customersId,
     servicesId: Number(servicesId),
     text: `Abstimmung ${user}`,
   });
 };
 
 const manual = async ({ clockodo }: ClockodoProp) => {
-  const customersId = await getDefaultCustomer();
-  const servicesId = process.env.SERVICE_ID_MEETING;
+  const customersId = await getDefaultCustomer({ clockodo });
+  const servicesId = await getMeetingServiceId({ clockodo });
   const { text } = await inquirer.prompt([
     {
       type: "input",
@@ -99,7 +96,7 @@ const manual = async ({ clockodo }: ClockodoProp) => {
   ]);
 
   await clockodo.startClock({
-    customersId: Number(customersId),
+    customersId,
     servicesId: Number(servicesId),
     text,
   });
