@@ -19,7 +19,7 @@ import { logRunningEntry, logWorkTimes } from "./utils/workTimes";
 enum Mode {
   Jira = "Jira/Git integration",
   Meeting = "Show meeting options",
-  Manual = "Start clock manually",
+  Manual = "Manual clock options",
   Absence = "Add absence",
   Reset = "Reset configuration",
   Exit = "Exit",
@@ -68,7 +68,7 @@ program.action(async () => {
   });
 
   await logWorkTimes({ clockodo });
-  await logRunningEntry({ clockodo });
+  const runningEntry = await logRunningEntry({ clockodo });
 
   const { mode }: { mode: Mode } = await inquirer.prompt([
     {
@@ -86,7 +86,7 @@ program.action(async () => {
       await meeting({ clockodo });
       break;
     case Mode.Manual:
-      await manual({ clockodo });
+      await manual({ clockodo, runningEntry });
       break;
     case Mode.Absence:
       await absence({ clockodo });

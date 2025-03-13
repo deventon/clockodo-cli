@@ -1,14 +1,21 @@
 import inquirer from "inquirer";
 import { ClockodoProp } from "../types/clockodo";
 import { Separator } from "@inquirer/prompts";
+import ora from "ora";
+import { ClockEditReturnType, Entry, TimeEntry } from "clockodo";
+import chalk from "chalk";
 
 enum Mode {
   Start = "Start clock",
   Stop = "Stop clock",
   Change = "Change running entry",
+  Extend = "Extend running entry",
 }
 
-export const manual = async ({ clockodo }: ClockodoProp) => {
+export const manual = async ({
+  clockodo,
+  runningEntry,
+}: ClockodoProp & { runningEntry: TimeEntry }) => {
   const { mode }: { mode: Mode } = await inquirer.prompt([
     {
       type: "list",
@@ -27,6 +34,9 @@ export const manual = async ({ clockodo }: ClockodoProp) => {
       break;
     case Mode.Change:
       await change({ clockodo });
+      break;
+    case Mode.Extend:
+      await extend({ clockodo, runningEntry });
       break;
   }
 };
@@ -133,4 +143,68 @@ const change = async ({ clockodo }: ClockodoProp) => {
     servicesId,
     text,
   });
+};
+
+const extend = async ({
+  clockodo,
+  runningEntry,
+}: ClockodoProp & { runningEntry: Entry }) => {
+  const { minutes } = await inquirer.prompt([
+    {
+      type: "number",
+      name: "minutes",
+      message: "How many minutes?",
+    },
+  ]);
+
+  const data = (await clockodo.changeClockDuration({
+    time_since_before: runningEntry.timeSince,
+    entriesId: runningEntry.id,
+    durationBefore: 0,
+    duration: 60 * minutes,
+  })) as ClockEditReturnType & { overlappingCorrection: any };
+
+  console.log(data.overlappingCorrection);
+
+  const spinner = ora(`Updating running entry...`).start();
+
+  const { overlappingCorrection } = data;
+  const { running } = data;
+
+  const previousEntryId = overlappingCorrection?.truncatePreviousEntry;
+
+  if (previousEntryId) {
+    await clockodo.editEntry({
+      id: previousEntryId,
+      timeUntil: running.timeSince,
+      transferTimeFrom: runningEntry.id,
+    });
+
+    return spinner.succeed(
+      chalk.green("Running entry updated, previous entry truncated.\n")
+    );
+  } else if (overlappingCorrection?.overlappingFreeTimeSince) {
+    const timeSince =
+      new Date(overlappingCorrection.overlappingFreeTimeSince)
+        .toISOString()
+        .split(".")[0] + "Z";
+
+    await clockodo.editEntry({
+      id: runningEntry.id,
+      timeSince,
+      timeSinceBefore: runningEntry.timeSince,
+    });
+
+    return spinner.succeed(
+      chalk.green(
+        "Running entry updated, start fit to previous entry's end time.\n"
+      )
+    );
+  }
+
+  return spinner.warn(
+    chalk.yellow(
+      "Running entry updated, no previous entry found. Check your timetable if you did not expect this.\n"
+    )
+  );
 };

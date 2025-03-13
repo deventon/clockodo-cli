@@ -66,4 +66,6 @@ export const logRunningEntry = async ({ clockodo }: ClockodoProp) => {
       } on ${customer.name} for ${duration}h.\n`
     )
   );
+
+  return running;
 };
