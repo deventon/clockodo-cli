@@ -44,7 +44,7 @@ program.action(async () => {
   await storage.init();
   let apiKey = await keytar.getPassword("clockodo-cli", Account.ApiKey);
   let email = await keytar.getPassword("clockodo-cli", Account.Email);
-  let jiraToken = await keytar.getPassword("clockodo-cli", Account.JiraToken);
+  // let jiraToken = await keytar.getPassword("clockodo-cli", Account.JiraToken);
 
   if (apiKey === null || email === null) {
     console.log("No Clockodo API key found. Please log in.");
@@ -54,10 +54,10 @@ program.action(async () => {
   }
 
   // Check Jira API token
-  if (jiraToken === null) {
-    console.log("No Jira API token found. Please enter it.");
-    jiraToken = await setJiraToken();
-  }
+  // if (jiraToken === null) {
+  //   console.log("No Jira API token found. Please enter it.");
+  //   jiraToken = await setJiraToken();
+  // }
 
   const clockodo = new Clockodo({
     client: {
