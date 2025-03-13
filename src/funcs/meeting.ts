@@ -74,7 +74,6 @@ const call = async ({ clockodo }: ClockodoProp) => {
       return filteredUsers.map((user) => ({
         name: user.name,
         value: user.name,
-        description: user.email,
       }));
     },
   });
