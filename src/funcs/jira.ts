@@ -21,7 +21,7 @@ export const jira = async ({ clockodo }: ClockodoProp) => {
     {
       type: "list",
       name: "mode",
-      message: "What do you want to do?",
+      message: "What are you doing on your current branch?",
       choices: Object.values(Mode),
     },
   ]);

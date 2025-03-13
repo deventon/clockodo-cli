@@ -73,7 +73,7 @@ export const absence = async ({ clockodo }: ClockodoProp) => {
         type: "confirm",
         name: "halfDay",
         default: false,
-        message: "Half day?",
+        message: "Add this as a half day absence?",
       },
     ]);
 

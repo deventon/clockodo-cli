@@ -17,11 +17,11 @@ import os from "os";
 import { logRunningEntry, logWorkTimes } from "./utils/workTimes";
 
 enum Mode {
-  Jira = "Jira",
-  Meeting = "Meeting",
-  Manual = "Manual",
-  Absence = "Absence",
-  Reset = "Reset",
+  Jira = "Jira/Git integration",
+  Meeting = "Show meeting options",
+  Manual = "Start clock manually",
+  Absence = "Add absence",
+  Reset = "Reset configuration",
   Exit = "Exit",
 }
 
@@ -74,7 +74,7 @@ program.action(async () => {
     {
       type: "list",
       name: "mode",
-      message: "What do you want to do?",
+      message: "What do you want to track?",
       choices: Object.values(Mode),
     },
   ]);

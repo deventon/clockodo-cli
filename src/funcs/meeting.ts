@@ -8,9 +8,9 @@ import {
 } from "../utils/defaults";
 
 enum Mode {
-  Preset = "Preset",
-  Call = "Call",
-  Manual = "Manual",
+  Preset = "Meeting presets",
+  Call = "Single coworker",
+  Manual = "Choose description manually",
 }
 
 export const meeting = async ({ clockodo }: ClockodoProp) => {
@@ -18,7 +18,7 @@ export const meeting = async ({ clockodo }: ClockodoProp) => {
     {
       type: "list",
       name: "mode",
-      message: "What do you want to do?",
+      message: "What kind of meeting do you want to track?",
       choices: Object.values(Mode),
     },
   ]);

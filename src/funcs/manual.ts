@@ -3,9 +3,9 @@ import { ClockodoProp } from "../types/clockodo";
 import { Separator } from "@inquirer/prompts";
 
 enum Mode {
-  Start = "Start",
-  Stop = "Stop",
-  Change = "Change",
+  Start = "Start clock",
+  Stop = "Stop clock",
+  Change = "Change running entry",
 }
 
 export const manual = async ({ clockodo }: ClockodoProp) => {
