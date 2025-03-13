@@ -3,7 +3,7 @@ import { program } from "commander";
 import inquirer from "inquirer";
 import keytar from "keytar";
 import { setClockodoData, setJiraToken } from "./utils/auth";
-import { Account, Storage } from "./types/config";
+import { Account } from "./types/config";
 import { development } from "./funcs/development";
 import { meeting } from "./funcs/meeting";
 import { manual } from "./funcs/manual";
@@ -11,14 +11,15 @@ import { absence } from "./funcs/absence";
 import { exit } from "./funcs/exit";
 import { Clockodo } from "clockodo";
 import storage from "node-persist";
+import { reset } from "./funcs/config";
 
 enum Mode {
   Development = "Development",
   Meeting = "Meeting",
   Manual = "Manual",
   Absence = "Absence",
+  Reset = "Reset",
   Exit = "Exit",
-  Logout = "Logout",
 }
 
 // Add global handler for unhandled promise rejections
@@ -41,19 +42,21 @@ process.on("unhandledRejection", (reason: any) => {
 
 program.action(async () => {
   await storage.init();
-  const apiKey = await keytar.getPassword("clockodo-cli", Account.ApiKey);
-  const email = await keytar.getPassword("clockodo-cli", Account.Email);
-  const jiraToken = await keytar.getPassword("clockodo-cli", Account.JiraToken);
+  let apiKey = await keytar.getPassword("clockodo-cli", Account.ApiKey);
+  let email = await keytar.getPassword("clockodo-cli", Account.Email);
+  let jiraToken = await keytar.getPassword("clockodo-cli", Account.JiraToken);
 
   if (apiKey === null || email === null) {
     console.log("No Clockodo API key found. Please log in.");
-    await setClockodoData();
+    const loginData = await setClockodoData();
+    apiKey = loginData.apiKey;
+    email = loginData.email;
   }
 
   // Check Jira API token
   if (jiraToken === null) {
     console.log("No Jira API token found. Please enter it.");
-    await setJiraToken();
+    jiraToken = await setJiraToken();
   }
 
   const clockodo = new Clockodo({
@@ -88,17 +91,13 @@ program.action(async () => {
     case Mode.Absence:
       await absence({ clockodo });
       break;
+    case Mode.Reset: {
+      await reset();
+      break;
+    }
     case Mode.Exit:
       await exit();
       break;
-    case Mode.Logout: {
-      await keytar.deletePassword("clockodo-cli", Account.ApiKey);
-      await keytar.deletePassword("clockodo-cli", Account.Email);
-      await keytar.deletePassword("clockodo-cli", Account.JiraToken);
-      await storage.removeItem(Storage.DefaultCustomer);
-      console.log("Logged out successfully");
-      break;
-    }
   }
 });
 

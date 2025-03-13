@@ -3,7 +3,7 @@ import axios from "axios";
 import keytar from "keytar";
 import { Account } from "../types/config";
 
-export async function setClockodoData(): Promise<void> {
+export const setClockodoData = async () => {
   const answers = await inquirer.prompt([
     {
       type: "input",
@@ -40,6 +40,7 @@ export async function setClockodoData(): Promise<void> {
     await keytar.setPassword("clockodo-cli", Account.Email, answers.email);
 
     console.log("Clockodo login successful!");
+    return { apiKey, email: answers.email };
   } catch (error) {
     console.error(
       "Login failed:",
@@ -52,9 +53,9 @@ export async function setClockodoData(): Promise<void> {
         : "No response from server."
     );
   }
-}
+};
 
-export async function setJiraToken(): Promise<void> {
+export const setJiraToken = async () => {
   const { jiraEmail } = await inquirer.prompt([
     {
       type: "input",
@@ -78,4 +79,6 @@ export async function setJiraToken(): Promise<void> {
   await keytar.setPassword("clockodo-cli", "jira-api-token", encodedJiraToken);
 
   console.log("Jira API token generation successful!");
-}
+
+  return encodedJiraToken;
+};
