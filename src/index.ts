@@ -87,6 +87,14 @@ program.action(async () => {
     case MainMode.Exit:
       await exit();
       break;
+    case MainMode.Logout: {
+      await keytar.deletePassword("clockodo-cli", Account.ApiKey);
+      await keytar.deletePassword("clockodo-cli", Account.Email);
+      await keytar.deletePassword("clockodo-cli", Account.JiraToken);
+      await keytar.deletePassword("clockodo-cli", Account.DefaultCustomer);
+      console.log("Logged out successfully");
+      break;
+    }
   }
 });
 

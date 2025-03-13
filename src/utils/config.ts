@@ -6,7 +6,7 @@ import { Account } from "../types/config";
 export const setDefaultData = async ({
   clockodo,
 }: ClockodoProp): Promise<void> => {
-  const { customers } = await clockodo.getCustomers();
+  const { customers } = await clockodo.getCustomers({ filterActive: true });
 
   const { defaultCustomer } = await inquirer.prompt([
     {
