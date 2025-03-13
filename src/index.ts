@@ -3,7 +3,6 @@ import { program } from "commander";
 import inquirer from "inquirer";
 import keytar from "keytar";
 import { setClockodoData, setJiraToken } from "./utils/auth";
-import { MainMode } from "./types/modes";
 import { Account } from "./types/config";
 import { development } from "./funcs/development";
 import { meeting } from "./funcs/meeting";
@@ -12,6 +11,15 @@ import { absence } from "./funcs/absence";
 import { exit } from "./funcs/exit";
 import { Clockodo } from "clockodo";
 import { setDefaultData } from "./utils/config";
+
+enum Mode {
+  Development = "Development",
+  Meeting = "Meeting",
+  Manual = "Manual",
+  Absence = "Absence",
+  Exit = "Exit",
+  Logout = "Logout",
+}
 
 // Add global handler for unhandled promise rejections
 process.on("unhandledRejection", (reason: any) => {
@@ -62,32 +70,32 @@ program.action(async () => {
     await setDefaultData({ clockodo });
   }
 
-  const { mode }: { mode: MainMode } = await inquirer.prompt([
+  const { mode }: { mode: Mode } = await inquirer.prompt([
     {
       type: "list",
       name: "mode",
       message: "What do you want to do?",
-      choices: Object.values(MainMode),
+      choices: Object.values(Mode),
     },
   ]);
 
   switch (mode) {
-    case MainMode.Development:
+    case Mode.Development:
       await development({ clockodo });
       break;
-    case MainMode.Meeting:
+    case Mode.Meeting:
       await meeting({ clockodo });
       break;
-    case MainMode.Manual:
+    case Mode.Manual:
       await manual({ clockodo });
       break;
-    case MainMode.Absence:
+    case Mode.Absence:
       await absence({ clockodo });
       break;
-    case MainMode.Exit:
+    case Mode.Exit:
       await exit();
       break;
-    case MainMode.Logout: {
+    case Mode.Logout: {
       await keytar.deletePassword("clockodo-cli", Account.ApiKey);
       await keytar.deletePassword("clockodo-cli", Account.Email);
       await keytar.deletePassword("clockodo-cli", Account.JiraToken);

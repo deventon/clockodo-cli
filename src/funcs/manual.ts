@@ -1,26 +1,31 @@
 import inquirer from "inquirer";
 import { ClockodoProp } from "../types/clockodo";
 import { Separator } from "@inquirer/prompts";
-import { ManualMode } from "../types/modes";
+
+enum Mode {
+  Start = "Start",
+  Stop = "Stop",
+  Change = "Change",
+}
 
 export const manual = async ({ clockodo }: ClockodoProp) => {
-  const { mode }: { mode: ManualMode } = await inquirer.prompt([
+  const { mode }: { mode: Mode } = await inquirer.prompt([
     {
       type: "list",
       name: "mode",
       message: "What do you want to do?",
-      choices: Object.values(ManualMode),
+      choices: Object.values(Mode),
     },
   ]);
 
   switch (mode) {
-    case ManualMode.Start:
+    case Mode.Start:
       await start({ clockodo });
       break;
-    case ManualMode.Stop:
+    case Mode.Stop:
       await stop({ clockodo });
       break;
-    case ManualMode.Change:
+    case Mode.Change:
       await change({ clockodo });
       break;
   }
