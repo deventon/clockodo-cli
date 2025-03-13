@@ -2,9 +2,8 @@
 import { program } from "commander";
 import inquirer from "inquirer";
 import keytar from "keytar";
-import { setClockodoData, setJiraToken } from "./utils/auth";
+import { setClockodoData } from "./utils/auth";
 import { Account } from "./types/config";
-import { development } from "./funcs/development";
 import { meeting } from "./funcs/meeting";
 import { manual } from "./funcs/manual";
 import { absence } from "./funcs/absence";
@@ -12,9 +11,12 @@ import { exit } from "./funcs/exit";
 import { Clockodo } from "clockodo";
 import storage from "node-persist";
 import { reset } from "./funcs/config";
+import { jira } from "./funcs/jira";
+import path from "path";
+import os from "os";
 
 enum Mode {
-  Development = "Development",
+  Jira = "Jira",
   Meeting = "Meeting",
   Manual = "Manual",
   Absence = "Absence",
@@ -41,10 +43,9 @@ process.on("unhandledRejection", (reason: any) => {
 });
 
 program.action(async () => {
-  await storage.init();
+  await storage.init({ dir: path.join(os.homedir(), ".clockodo-cli") });
   let apiKey = await keytar.getPassword("clockodo-cli", Account.ApiKey);
   let email = await keytar.getPassword("clockodo-cli", Account.Email);
-  // let jiraToken = await keytar.getPassword("clockodo-cli", Account.JiraToken);
 
   if (apiKey === null || email === null) {
     console.log("No Clockodo API key found. Please log in.");
@@ -52,12 +53,6 @@ program.action(async () => {
     apiKey = loginData.apiKey;
     email = loginData.email;
   }
-
-  // Check Jira API token
-  // if (jiraToken === null) {
-  //   console.log("No Jira API token found. Please enter it.");
-  //   jiraToken = await setJiraToken();
-  // }
 
   const clockodo = new Clockodo({
     client: {
@@ -79,8 +74,8 @@ program.action(async () => {
     },
   ]);
   switch (mode) {
-    case Mode.Development:
-      await development({ clockodo });
+    case Mode.Jira:
+      await jira({ clockodo });
       break;
     case Mode.Meeting:
       await meeting({ clockodo });
@@ -91,10 +86,9 @@ program.action(async () => {
     case Mode.Absence:
       await absence({ clockodo });
       break;
-    case Mode.Reset: {
+    case Mode.Reset:
       await reset();
       break;
-    }
     case Mode.Exit:
       await exit();
       break;

@@ -82,3 +82,22 @@ export const setJiraToken = async () => {
 
   return encodedJiraToken;
 };
+
+export const getJiraToken = async () => {
+  const jiraToken = await keytar.getPassword("clockodo-cli", Account.JiraToken);
+
+  // Check Jira API token
+  if (jiraToken === null) {
+    console.log("No Jira API token found. Please enter it.");
+    const generatedJiraToken = await setJiraToken();
+    await keytar.setPassword(
+      "clockodo-cli",
+      Account.JiraToken,
+      generatedJiraToken
+    );
+
+    return generatedJiraToken;
+  }
+
+  return jiraToken;
+};

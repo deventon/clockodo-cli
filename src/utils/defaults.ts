@@ -28,7 +28,7 @@ export const getDevelopmentServiceId = async ({
       "No service ID for development configured. Please choose a default."
     );
     const defaultServiceId = await selectDefaultService({ clockodo });
-    await storage.setItem(Storage.ServiceIdMeeting, defaultServiceId);
+    await storage.setItem(Storage.ServiceIdDevelopment, defaultServiceId);
     return defaultServiceId;
   }
 
