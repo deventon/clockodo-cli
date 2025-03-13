@@ -8,7 +8,7 @@
     "dist"
   ],
   "bin": {
-    "clock-cli-next": "dist/index.js"
+    "clockodo-cli": "dist/index.js"
   },
   "scripts": {
     "prepare": "npm run build",
