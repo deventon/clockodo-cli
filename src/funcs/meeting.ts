@@ -1,9 +1,11 @@
 import { ClockodoProp } from "../types/clockodo";
 import { search } from "@inquirer/prompts";
 import inquirer from "inquirer";
-import { getDefaultCustomer, getMeetingServiceId } from "../utils/defaults";
-import storage from "node-persist";
-import { Storage } from "../types/config";
+import {
+  getDefaultCustomer,
+  getMeetingPresets,
+  getMeetingServiceId,
+} from "../utils/defaults";
 
 enum Mode {
   Preset = "Preset",
@@ -35,9 +37,9 @@ export const meeting = async ({ clockodo }: ClockodoProp) => {
 };
 
 const preset = async ({ clockodo }: ClockodoProp) => {
-  const presets = await storage.getItem(Storage.MeetingPresets);
+  const presets = await getMeetingPresets();
   const customersId = await getDefaultCustomer({ clockodo });
-  const servicesId = process.env.SERVICE_ID_MEETING;
+  const servicesId = await getMeetingServiceId({ clockodo });
 
   const { text } = await inquirer.prompt([
     {
@@ -50,7 +52,7 @@ const preset = async ({ clockodo }: ClockodoProp) => {
 
   await clockodo.startClock({
     customersId,
-    servicesId: Number(servicesId),
+    servicesId,
     text,
   });
 };
@@ -79,7 +81,7 @@ const call = async ({ clockodo }: ClockodoProp) => {
 
   await clockodo.startClock({
     customersId,
-    servicesId: Number(servicesId),
+    servicesId,
     text: `Abstimmung ${user}`,
   });
 };

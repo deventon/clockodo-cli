@@ -26,6 +26,11 @@ process.on("unhandledRejection", (reason: any) => {
   if (reason?.message?.includes("User force closed the prompt")) {
     console.error("Command interrupted by user");
     process.exit(0); // Exit gracefully
+  } else if (reason?.response?.data) {
+    // If the rejection is from an Axios request, log the response data
+    console.error("Unhandled axios error:");
+    console.error(reason.response.data);
+    process.exit(1);
   } else {
     // For other types of promise rejections, let them propagate to the main try/catch
     console.error("An unhandled promise rejection occurred:");
@@ -70,7 +75,6 @@ program.action(async () => {
       choices: Object.values(Mode),
     },
   ]);
-
   switch (mode) {
     case Mode.Development:
       await development({ clockodo });
