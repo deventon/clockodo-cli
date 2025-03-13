@@ -4,12 +4,14 @@ import inquirer from "inquirer";
 import keytar from "keytar";
 import { setClockodoData, setJiraToken } from "./utils/auth";
 import { MainMode } from "./types/modes";
-import { Account } from "./types/auth";
+import { Account } from "./types/config";
 import { development } from "./funcs/development";
 import { meeting } from "./funcs/meeting";
 import { manual } from "./funcs/manual";
 import { absence } from "./funcs/absence";
 import { exit } from "./funcs/exit";
+import { Clockodo } from "clockodo";
+import { setDefaultData } from "./utils/config";
 
 // Add global handler for unhandled promise rejections
 process.on("unhandledRejection", (reason: any) => {
@@ -28,6 +30,10 @@ program.action(async () => {
   const apiKey = await keytar.getPassword("clockodo-cli", Account.ApiKey);
   const email = await keytar.getPassword("clockodo-cli", Account.Email);
   const jiraToken = await keytar.getPassword("clockodo-cli", Account.JiraToken);
+  const defaultCustomer = await keytar.getPassword(
+    "clockodo-cli",
+    Account.DefaultCustomer
+  );
 
   if (apiKey === null || email === null) {
     console.log("No Clockodo API key found. Please log in.");
@@ -38,6 +44,22 @@ program.action(async () => {
   if (jiraToken === null) {
     console.log("No Jira API token found. Please enter it.");
     await setJiraToken();
+  }
+
+  const clockodo = new Clockodo({
+    client: {
+      name: "Clockodo CLI",
+      email,
+    },
+    authentication: {
+      user: email,
+      apiKey,
+    },
+  });
+
+  if (defaultCustomer === null) {
+    console.log("Please configure your default customer.");
+    await setDefaultData({ clockodo });
   }
 
   const { mode }: { mode: MainMode } = await inquirer.prompt([
@@ -51,16 +73,16 @@ program.action(async () => {
 
   switch (mode) {
     case MainMode.Development:
-      await development();
+      await development({ clockodo });
       break;
     case MainMode.Meeting:
-      await meeting();
+      await meeting({ clockodo });
       break;
     case MainMode.Manual:
-      await manual();
+      await manual({ clockodo });
       break;
     case MainMode.Absence:
-      await absence();
+      await absence({ clockodo });
       break;
     case MainMode.Exit:
       await exit();

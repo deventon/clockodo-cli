@@ -1,1 +1,3 @@
-export const meeting = async () => {};
+import { ClockodoProp } from "../types/clockodo";
+
+export const meeting = async ({ clockodo }: ClockodoProp) => {};

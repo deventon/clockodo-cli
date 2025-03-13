@@ -1,7 +1,7 @@
 import inquirer from "inquirer";
 import axios from "axios";
 import keytar from "keytar";
-import { Account } from "../types/auth";
+import { Account } from "../types/config";
 
 export async function setClockodoData(): Promise<void> {
   const answers = await inquirer.prompt([

@@ -6,3 +6,9 @@ export enum MainMode {
   Exit = "Exit",
   Logout = "Logout",
 }
+
+export enum ManualMode {
+  Start = "Start",
+  Stop = "Stop",
+  Change = "Change",
+}
