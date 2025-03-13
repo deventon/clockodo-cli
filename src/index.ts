@@ -14,6 +14,7 @@ import { reset } from "./funcs/config";
 import { jira } from "./funcs/jira";
 import path from "path";
 import os from "os";
+import { logRunningEntry, logWorkTimes } from "./utils/workTimes";
 
 enum Mode {
   Jira = "Jira",
@@ -65,6 +66,9 @@ program.action(async () => {
     },
     baseUrl: "http://clockodo.loc/api",
   });
+
+  await logWorkTimes({ clockodo });
+  await logRunningEntry({ clockodo });
 
   const { mode }: { mode: Mode } = await inquirer.prompt([
     {
