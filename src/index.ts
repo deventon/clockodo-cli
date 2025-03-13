@@ -63,6 +63,7 @@ program.action(async () => {
       user: email,
       apiKey,
     },
+    baseUrl: "http://clockodo.loc/api",
   });
 
   const { mode }: { mode: Mode } = await inquirer.prompt([
