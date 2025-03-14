@@ -43,12 +43,7 @@ const development = async ({
   const customersId = await getDefaultCustomer({ clockodo });
   const servicesId = await getDevelopmentServiceId({ clockodo });
 
-  const branch = await getBranch();
-  const key = branch.match(/\w+-\d+/)?.[0];
-  if (!key) {
-    console.error("No Jira key found in branch name.");
-    process.exit(1);
-  }
+  const key = await parseJiraTicketFromBranch();
 
   const { text, projectsId } = await getJiraData({ jiraToken, key });
 
@@ -67,8 +62,7 @@ const review = async ({
   const customersId = await getDefaultCustomer({ clockodo });
   const servicesId = await getTestingServiceId({ clockodo });
 
-  const branch = await getBranch();
-  const key = branch.match(/\w+-\d+/)[0];
+  const key = await parseJiraTicketFromBranch();
 
   const { text, projectsId } = await getJiraData({ jiraToken, key });
 
@@ -78,4 +72,16 @@ const review = async ({
     projectsId,
     text,
   });
+};
+
+const parseJiraTicketFromBranch = async () => {
+  const branch = await getBranch();
+  const key = branch.match(/\w+-\d+/)?.[0];
+
+  if (!key) {
+    console.error("No Jira key found in branch name.");
+    process.exit(1);
+  }
+
+  return key;
 };
