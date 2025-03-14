@@ -64,7 +64,7 @@ program.action(async () => {
       user: email,
       apiKey,
     },
-    baseUrl: "http://clockodo.loc/api",
+    baseUrl: "http://my.clockodo.com/api",
   });
 
   await logWorkTimes({ clockodo });

@@ -19,7 +19,7 @@ export const setClockodoData = async () => {
 
   try {
     const response = await axios.post(
-      "http://clockodo.loc/api/apikey",
+      "https://my.clockodo.com/api/apikey",
       {
         autologin: false,
         email: answers.email,
