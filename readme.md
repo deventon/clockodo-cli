@@ -1,22 +1,31 @@
-# Installing
+**Unofficial node based CLI tool for [Clockodo](https://www.clockodo.com)**
+
+# Installation
 
 ```bash
-npm install -g clock-cli
+npm install -g clockodo-cli
 ```
 
-### Start clock
+## Config and setup
 
-POST /v2/clock that will start a new entry with given customer/service/description.
+You need to login to the application to generate and store an API key.
+To use the Jira integration, you'll also have to enter your Jira login email and a Jira API key.
 
-### Stop clock
+Core functionality of this tool requires you to set up default customers and services. You will be prompted to do so if necessary.
 
-DELETE /v2/clock that will delete the running entry. Queries the endpoint before to get the running entry id.
+You can reset your config in the application if you need to. Better ways to do this will be implemented at a later time.
 
-### Start development on current branch
+## Jira integration
 
-POST /v2/clock with customer set to "Entwicklung Main", service set to "Entwicklung" and description set to the current git branch name. Usable only in a git project.
+If you have set up your Jira integration, you can start a clock based on your currently checked out Git branch. This will parse a jira ticket key, query the ticket name and use that as a description for your entry. There is some additional behaviour happening in the background:
 
-### Session data / Login (api key)
+- If your task is a sub task, it will use the parent
+- If your task has a linked epic, it will use a custom field to map it to a Clockodo projectId. This will probably not work without custom configuration and will later be replaced by name matching a project.
 
-Session data is stored in your home directory under .clock-cli/config.json.
-To debug or log out, run clock-cli relog, this will delete the file.
+## Meetings
+
+You can use self defined presets as a shortcut to quickly book meetings. You can also quickly start booking a one-on-one meeting with a colleague by selecting one from your company.
+
+## Editing an entry
+
+This is very limited. You can change the currently running entry's data and extend an entry. For most cases you should use either the main application or the clock.
