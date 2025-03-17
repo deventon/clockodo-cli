@@ -23,6 +23,7 @@
     "@types/luxon": "^3.4.2",
     "@types/node": "^22.13.10",
     "@types/node-persist": "^3.1.8",
+    "cz-conventional-changelog": "^3.3.0",
     "semantic-release": "^24.2.3",
     "tsup": "^8.4.0",
     "typescript": "^5.8.2"
@@ -45,5 +46,10 @@
     "command-line",
     "time-tracking",
     "productivity"
-  ]
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }
