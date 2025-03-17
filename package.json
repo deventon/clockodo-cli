@@ -1,6 +1,6 @@
 {
   "name": "clockodo-cli",
-  "version": "1.0.2",
+  "version": "0.0.0-semantically-released",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -9,6 +9,14 @@
   ],
   "bin": {
     "clockodo-cli": "dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deventon/clockodo-cli.git"
+  },
+  "homepage": "https://clockodo.com",
+  "bugs": {
+    "url": "https://github.com/deventon/clockodo-cli/issues"
   },
   "scripts": {
     "prepare": "npm run build",
