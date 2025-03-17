@@ -2,6 +2,7 @@
 
 [![Version on NPM](https://img.shields.io/npm/v/clockodo-cli)](https://www.npmjs.com/package/clockodo)
 [![Semantically released](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Monthly downloads on NPM](https://img.shields.io/npm/dm/clockodo-cli)](https://www.npmjs.com/package/clockodo-cli)<br>
 
 # Installation
