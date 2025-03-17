@@ -164,8 +164,6 @@ const extend = async ({
     duration: 60 * minutes,
   })) as ClockEditReturnType & { overlappingCorrection: any };
 
-  console.log(data.overlappingCorrection);
-
   const spinner = ora(`Updating running entry...`).start();
 
   const { overlappingCorrection } = data;
