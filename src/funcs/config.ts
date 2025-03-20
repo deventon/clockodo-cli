@@ -3,20 +3,46 @@ import keytar from "keytar";
 import { Account } from "../types/config";
 import inquirer from "inquirer";
 
+enum Mode {
+  Clockodo = "Clockodo",
+  Jira = "Jira",
+  Defaults = "Defaults",
+}
+
 export const reset = async () => {
-  const { clear } = await inquirer.prompt([
+  const { mode } = await inquirer.prompt([
     {
-      type: "confirm",
-      name: "clear",
-      default: false,
-      message: "Do you want to clear all stored data?",
+      type: "list",
+      name: "mode",
+      message: "What are you doing on your current branch?",
+      choices: Object.values(Mode),
     },
   ]);
 
-  if (clear) {
-    await storage.clear();
-    for (const key of Object.values(Account)) {
-      await keytar.deletePassword("clockodo-cli", key);
-    }
+  switch (mode) {
+    case Mode.Clockodo:
+      await clockodo();
+      break;
+    case Mode.Jira:
+      await jira();
+      break;
+    case Mode.Defaults:
+      await defaults();
+      break;
   }
+};
+
+const clockodo = async () => {
+  await keytar.deletePassword("clockodo-cli", Account.Email);
+  await keytar.deletePassword("clockodo-cli", Account.ApiKey);
+  console.log("Clockodo credentials have been deleted.");
+};
+
+const jira = async () => {
+  await keytar.deletePassword("clockodo-cli", Account.JiraToken);
+  console.log("Jira token has been deleted.");
+};
+const defaults = async () => {
+  await storage.clear();
+  console.log("Defaults have been reset.");
 };
