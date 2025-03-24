@@ -81,7 +81,7 @@ const call = async ({ clockodo }: ClockodoProp) => {
   await clockodo.startClock({
     customersId,
     servicesId,
-    text: `Abstimmung ${user}`,
+    text: `Meeting ${user}`,
   });
 };
 
