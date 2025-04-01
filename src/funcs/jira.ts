@@ -8,6 +8,7 @@ import {
   getDevelopmentServiceId,
   getTestingServiceId,
 } from "../utils/defaults";
+import chalk from "chalk";
 
 enum Mode {
   Development = "Development",
@@ -45,7 +46,13 @@ const development = async ({
 
   const key = await parseJiraTicketFromBranch();
 
-  const { text, projectsId } = await getJiraData({ jiraToken, key });
+  const { text, project } = await getJiraData({ jiraToken, key });
+
+  const projectsId = await getOrCreateProject({
+    clockodo,
+    project,
+    customersId,
+  });
 
   await clockodo.startClock({
     customersId,
@@ -64,7 +71,13 @@ const review = async ({
 
   const key = await parseJiraTicketFromBranch();
 
-  const { text, projectsId } = await getJiraData({ jiraToken, key });
+  const { text, project } = await getJiraData({ jiraToken, key });
+
+  const projectsId = await getOrCreateProject({
+    clockodo,
+    project,
+    customersId,
+  });
 
   await clockodo.startClock({
     customersId,
@@ -84,4 +97,47 @@ const parseJiraTicketFromBranch = async () => {
   }
 
   return key;
+};
+
+const getOrCreateProject = async ({
+  clockodo,
+  project,
+  customersId,
+}: ClockodoProp & { project?: string; customersId: number }) => {
+  let projectsId: number | undefined;
+  if (project) {
+    const { projects } = await clockodo.getProjects();
+    projectsId = projects?.find(({ name }) => name === project)?.id;
+
+    if (!projectsId) {
+      const { createProject } = await inquirer.prompt([
+        {
+          type: "confirm",
+          name: "createProject",
+          message: `Project ${chalk.yellow(
+            project
+          )} does not exist. Do you want to create it?`,
+        },
+      ]);
+
+      if (createProject) {
+        const {
+          project: { id },
+        } = await clockodo.addProject({
+          name: project,
+          customersId,
+        });
+        console.log(`Project ${chalk.yellow(project)} created.`);
+        projectsId = id;
+      } else {
+        console.log(
+          `Project ${chalk.yellow(
+            project
+          )} not created. Starting entry without project.`
+        );
+      }
+    }
+  }
+
+  return projectsId;
 };
