@@ -25,7 +25,7 @@ You can reset your config in the application if you need to. Better ways to do t
 If you have set up your Jira integration, you can start a clock based on your currently checked out Git branch. This will parse a jira ticket key, query the ticket name and use that as a description for your entry. There is some additional behaviour happening in the background:
 
 - If your task is a sub task, it will use the parent
-- If your task has a linked epic, it will use a custom field to map it to a Clockodo projectId. This will probably not work without custom configuration and will later be replaced by name matching a project.
+- If your task has a linked epic, it will query your clockodo projects for an exact name match. If there is no project, you can create one now by confirming.
 
 ## Meetings
 
