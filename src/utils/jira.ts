@@ -40,36 +40,18 @@ export const getJiraData = async ({
     spinner.succeed(chalk.green("Parent ticket information retrieved."));
   }
 
-  let projectsId = undefined;
-
-  if (res.fields.issuetype.name === "Epic") {
-    projectsId = res.fields.customfield_10002;
-  } else {
-    projectsId = res.fields.parent
-      ? (
-          await axios.get(
-            `https://clickbits.atlassian.net/rest/api/2/issue/${res.fields.parent?.key}`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Basic ${jiraToken}`,
-              },
-            }
-          )
-        ).data.fields.customfield_10002
-      : null;
-  }
+  const project = res.fields.parent?.fields?.summary;
 
   const summary = res.fields.summary;
   const relevantKey = res.key;
-  const epicKey =
-    res.fields.issuetype.name === "Epic" ? res.key : res.fields.parent?.key;
 
   console.info(
-    epicKey
-      ? `\nThis ticket has an epic (${epicKey}). The project will be set accordingly.`
+    project
+      ? `\nThis ticket has an epic ${chalk.yellow(
+          project
+        )}. The project will be set accordingly.`
       : "No epic set. The entry will be started without a project."
   );
 
-  return { text: `${relevantKey} ${summary}`, projectsId };
+  return { text: `${relevantKey} ${summary}`, project };
 };
