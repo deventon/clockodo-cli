@@ -41,6 +41,7 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
+    "@inquirer/prompts": "^7.5.1",
     "axios": "^1.8.3",
     "chalk": "^5.4.1",
     "clockodo": "^25.0.0",

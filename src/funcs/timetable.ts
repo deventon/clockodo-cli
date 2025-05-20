@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 import { ClockodoProp } from "../types/clockodo";
 import actionSelect from "inquirer-action-select";
+import { confirm } from "@inquirer/prompts";
 
 export const timetable = async ({ clockodo }: ClockodoProp) => {
   const { customers } = await clockodo.getCustomers();
@@ -62,5 +63,17 @@ export const timetable = async ({ clockodo }: ClockodoProp) => {
     pageSize: 25,
   });
 
-  console.log(selectedEntry);
+  if (selectedEntry.action === "delete") {
+    const answer = await confirm({
+      message: "Are you sure you want to delete the selected entry?",
+      default: true,
+    });
+
+    if (answer) {
+      await clockodo.deleteEntry({ id: selectedEntry.answer });
+      console.log("Entry deleted.");
+    } else {
+      console.log("Entry not deleted.");
+    }
+  }
 };
