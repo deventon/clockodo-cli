@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { program } from "commander";
 import inquirer from "inquirer";
-import keytar from "keytar";
 import { setClockodoData } from "./utils/auth";
 import { Account } from "./types/config";
 import { meeting } from "./funcs/meeting";
@@ -45,10 +44,10 @@ process.on("unhandledRejection", (reason: any) => {
 
 program.action(async () => {
   await storage.init({ dir: path.join(os.homedir(), ".clockodo-cli") });
-  let apiKey = await keytar.getPassword("clockodo-cli", Account.ApiKey);
-  let email = await keytar.getPassword("clockodo-cli", Account.Email);
+  let apiKey = await storage.getItem(Account.ApiKey);
+  let email = await storage.getItem(Account.Email);
 
-  if (apiKey === null || email === null) {
+  if (apiKey === undefined || email === undefined) {
     console.log("No Clockodo API key found. Please log in.");
     const loginData = await setClockodoData();
     apiKey = loginData.apiKey;
