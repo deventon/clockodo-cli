@@ -15,11 +15,13 @@ import { jira } from "./funcs/jira";
 import path from "path";
 import os from "os";
 import { logRunningEntry, logWorkTimes } from "./utils/workTimes";
+import { timetable } from "./funcs/timetable";
 
 enum Mode {
   Jira = "Jira/Git integration",
   Meeting = "Show meeting options",
   Manual = "Manual clock options",
+  Timetable = "Show timetable",
   Absence = "Add absence",
   Reset = "Reset configuration",
   Exit = "Exit",
@@ -87,6 +89,9 @@ program.action(async () => {
       break;
     case Mode.Manual:
       await manual({ clockodo, runningEntry });
+      break;
+    case Mode.Timetable:
+      await timetable({ clockodo });
       break;
     case Mode.Absence:
       await absence({ clockodo });
