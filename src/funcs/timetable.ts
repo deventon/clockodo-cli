@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import { ClockodoProp } from "../types/clockodo";
-import inquirer from "inquirer";
+import actionSelect from "inquirer-action-select";
 
 export const timetable = async ({ clockodo }: ClockodoProp) => {
   const { customers } = await clockodo.getCustomers();
@@ -48,16 +48,19 @@ export const timetable = async ({ clockodo }: ClockodoProp) => {
       return { name, value: entry.id, description: details };
     });
 
-  const { selectedEntry } = await inquirer.prompt([
-    {
-      type: "list",
-      name: "selectedEntry",
-      message: "What do you want to track?",
-      choices: mappedEntries,
-      loop: false,
-      pageSize: 25,
-    },
-  ]);
+  const selectedEntry = await actionSelect({
+    message: "What do you want to track?",
+    actions: [
+      { value: "edit", name: "Edit", key: "e" },
+      { value: "delete", name: "Delete", key: "x" },
+      { value: "merge", name: "Merge", key: "m" },
+      { value: "split", name: "Split", key: "s" },
+      { value: "quit", name: "Quit", key: "q" },
+    ],
+    choices: mappedEntries,
+    loop: false,
+    pageSize: 25,
+  });
 
   console.log(selectedEntry);
 };
