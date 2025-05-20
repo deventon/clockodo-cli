@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 import axios from "axios";
-import keytar from "keytar";
+import storage from "node-persist";
 import { Account } from "../types/config";
 
 export const setClockodoData = async () => {
@@ -36,8 +36,8 @@ export const setClockodoData = async () => {
 
     const apiKey = response.data.apikey;
 
-    await keytar.setPassword("clockodo-cli", Account.ApiKey, apiKey);
-    await keytar.setPassword("clockodo-cli", Account.Email, answers.email);
+    await storage.setItem(Account.ApiKey, apiKey);
+    await storage.setItem(Account.Email, answers.email);
 
     console.log("Clockodo login successful!");
     return { apiKey, email: answers.email };
@@ -76,7 +76,7 @@ export const setJiraToken = async () => {
     "base64"
   );
 
-  await keytar.setPassword("clockodo-cli", "jira-api-token", encodedJiraToken);
+  await storage.setItem(Account.JiraToken, encodedJiraToken);
 
   console.log("Jira API token generation successful!");
 
@@ -84,17 +84,14 @@ export const setJiraToken = async () => {
 };
 
 export const getJiraToken = async () => {
-  const jiraToken = await keytar.getPassword("clockodo-cli", Account.JiraToken);
+  const jiraToken = await storage.getItem(Account.JiraToken);
 
   // Check Jira API token
   if (jiraToken === null) {
     console.log("No Jira API token found. Please enter it.");
     const generatedJiraToken = await setJiraToken();
-    await keytar.setPassword(
-      "clockodo-cli",
-      Account.JiraToken,
-      generatedJiraToken
-    );
+
+    await storage.setItem(Account.JiraToken, generatedJiraToken);
 
     return generatedJiraToken;
   }

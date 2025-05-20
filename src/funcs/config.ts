@@ -1,6 +1,5 @@
 import storage from "node-persist";
-import keytar from "keytar";
-import { Account } from "../types/config";
+import { Account, Storage } from "../types/config";
 import inquirer from "inquirer";
 
 enum Mode {
@@ -33,16 +32,20 @@ export const reset = async () => {
 };
 
 const clockodo = async () => {
-  await keytar.deletePassword("clockodo-cli", Account.Email);
-  await keytar.deletePassword("clockodo-cli", Account.ApiKey);
+  await storage.removeItem(Account.Email);
+  await storage.removeItem(Account.ApiKey);
   console.log("Clockodo credentials have been deleted.");
 };
 
 const jira = async () => {
-  await keytar.deletePassword("clockodo-cli", Account.JiraToken);
+  await storage.removeItem(Account.JiraToken);
   console.log("Jira token has been deleted.");
 };
 const defaults = async () => {
-  await storage.clear();
+  await storage.removeItem(Storage.ServiceIdDevelopment);
+  await storage.removeItem(Storage.ServiceIdMeeting);
+  await storage.removeItem(Storage.ServiceIdTesting);
+  await storage.removeItem(Storage.MeetingPresets);
+  await storage.removeItem(Storage.DefaultCustomer);
   console.log("Defaults have been reset.");
 };

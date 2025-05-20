@@ -47,7 +47,6 @@
     "commander": "^13.1.0",
     "dotenv": "^16.4.7",
     "inquirer": "^12.4.3",
-    "keytar": "^7.9.0",
     "luxon": "^3.5.0",
     "node-persist": "^4.0.4",
     "ora": "^8.2.0"
