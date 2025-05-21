@@ -41,7 +41,9 @@ export const timetable = async ({ clockodo }: ClockodoProp) => {
       let name = "[";
       name += DateTime.fromISO(entry.timeSince).toFormat("HH:mm");
       name += " - ";
-      name += DateTime.fromISO(entry.timeUntil).toFormat("HH:mm");
+      name += entry.timeUntil
+        ? DateTime.fromISO(entry.timeUntil).toFormat("HH:mm")
+        : "now";
       name += "] ";
       name += entry.text ?? `No description (${customer})`;
 
