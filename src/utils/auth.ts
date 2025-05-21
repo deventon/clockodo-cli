@@ -87,7 +87,7 @@ export const getJiraToken = async () => {
   const jiraToken = await storage.getItem(Account.JiraToken);
 
   // Check Jira API token
-  if (jiraToken === null) {
+  if (jiraToken === undefined) {
     console.log("No Jira API token found. Please enter it.");
     const generatedJiraToken = await setJiraToken();
 
