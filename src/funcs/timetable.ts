@@ -7,12 +7,17 @@ export const timetable = async ({ clockodo }: ClockodoProp) => {
   const { customers } = await clockodo.getCustomers();
   const { projects } = await clockodo.getProjects();
   const { services } = await clockodo.getServices();
+  const {
+    user: { timezone: zone },
+  } = await clockodo.getAggregatesUsersMe();
 
-  const startOfDay = DateTime.local({ zone: "utc" })
+  const startOfDay = DateTime.local({ zone })
     .startOf("day")
+    .setZone("utc")
     .set({ millisecond: 0 });
-  const endOfDay = DateTime.local({ zone: "utc" })
+  const endOfDay = DateTime.local({ zone })
     .endOf("day")
+    .setZone("utc")
     .set({ millisecond: 0 });
   const { entries } = await clockodo.getEntries({
     timeSince: startOfDay.toISO({ suppressMilliseconds: true }),
