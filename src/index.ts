@@ -14,9 +14,11 @@ import { jira } from "./funcs/jira";
 import path from "path";
 import os from "os";
 import { logRunningEntry, logWorkTimes } from "./utils/workTimes";
+import { favorites } from "./funcs/favorites";
 
 enum Mode {
   Jira = "Jira/Git integration",
+  Favorites = "Favorites",
   Meeting = "Show meeting options",
   Manual = "Manual clock options",
   Absence = "Add absence",
@@ -80,6 +82,9 @@ program.action(async () => {
   switch (mode) {
     case Mode.Jira:
       await jira({ clockodo });
+      break;
+    case Mode.Favorites:
+      await favorites({ clockodo });
       break;
     case Mode.Meeting:
       await meeting({ clockodo });
