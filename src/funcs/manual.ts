@@ -41,7 +41,7 @@ export const manual = async ({
   }
 };
 
-const getEntryData = async ({ clockodo }: ClockodoProp) => {
+export const getEntryData = async ({ clockodo }: ClockodoProp) => {
   const { customers } = await clockodo.getCustomers({ filterActive: true });
   const { services } = await clockodo.getServices({ filterActive: true });
 
