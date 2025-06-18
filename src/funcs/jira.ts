@@ -17,8 +17,9 @@ enum Mode {
 
 export const jira = async ({ 
   clockodo, 
-  mode 
-}: ClockodoProp & { mode?: "development" | "review" }) => {
+  mode,
+  ticket
+}: ClockodoProp & { mode?: "development" | "review"; ticket?: string }) => {
   const jiraToken = await getJiraToken();
 
   let selectedMode: Mode;
@@ -41,10 +42,10 @@ export const jira = async ({
 
   switch (selectedMode) {
     case Mode.Development:
-      await development({ clockodo, jiraToken });
+      await development({ clockodo, jiraToken, ticket });
       break;
     case Mode.Review:
-      await review({ clockodo, jiraToken });
+      await review({ clockodo, jiraToken, ticket });
       break;
   }
 };
@@ -52,11 +53,12 @@ export const jira = async ({
 const development = async ({
   clockodo,
   jiraToken,
-}: ClockodoProp & { jiraToken: string }) => {
+  ticket,
+}: ClockodoProp & { jiraToken: string; ticket?: string }) => {
   const customersId = await getDefaultCustomer({ clockodo });
   const servicesId = await getDevelopmentServiceId({ clockodo });
 
-  const key = await parseJiraTicketFromBranch();
+  const key = ticket ?? await parseJiraTicketFromBranch();
 
   const { text, project } = await getJiraData({ jiraToken, key });
 
@@ -77,11 +79,12 @@ const development = async ({
 const review = async ({
   clockodo,
   jiraToken,
-}: ClockodoProp & { jiraToken: string }) => {
+  ticket,
+}: ClockodoProp & { jiraToken: string; ticket?: string }) => {
   const customersId = await getDefaultCustomer({ clockodo });
   const servicesId = await getTestingServiceId({ clockodo });
 
-  const key = await parseJiraTicketFromBranch();
+  const key = ticket ?? await parseJiraTicketFromBranch();
 
   const { text, project } = await getJiraData({ jiraToken, key });
 
