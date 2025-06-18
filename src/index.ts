@@ -46,8 +46,8 @@ process.on("unhandledRejection", (reason: any) => {
 });
 
 program
-  .option("-d, --jira-dev", "Skip interactive mode and directly start Jira development tracking")
-  .option("-t, --jira-test", "Skip interactive mode and directly start Jira review tracking")
+  .option("-d, --jira-dev [ticket]", "Skip interactive mode and directly start Jira development tracking")
+  .option("-t, --jira-test [ticket]", "Skip interactive mode and directly start Jira review tracking")
 
 program.action(async (options) => {
   await storage.init({ dir: path.join(os.homedir(), ".clockodo-cli") });
