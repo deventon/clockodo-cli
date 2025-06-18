@@ -15,6 +15,7 @@ import path from "path";
 import os from "os";
 import { logRunningEntry, logWorkTimes } from "./utils/workTimes";
 import { favorites } from "./funcs/favorites";
+import { handleFlags } from "./funcs/flags";
 
 enum Mode {
   Jira = "Jira/Git integration",
@@ -44,7 +45,11 @@ process.on("unhandledRejection", (reason: any) => {
   }
 });
 
-program.action(async () => {
+program
+  .option("-d, --jira-dev", "Skip interactive mode and directly start Jira development tracking")
+  .option("-t, --jira-test", "Skip interactive mode and directly start Jira review tracking")
+
+program.action(async (options) => {
   await storage.init({ dir: path.join(os.homedir(), ".clockodo-cli") });
   let apiKey = await storage.getItem(Account.ApiKey);
   let email = await storage.getItem(Account.Email);
@@ -68,8 +73,11 @@ program.action(async () => {
     baseUrl: "https://my.clockodo.com/api",
   });
 
+  await handleFlags(options, clockodo);
+
   await logWorkTimes({ clockodo });
   const runningEntry = await logRunningEntry({ clockodo });
+
 
   const { mode }: { mode: Mode } = await inquirer.prompt([
     {

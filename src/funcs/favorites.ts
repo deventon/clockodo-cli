@@ -11,6 +11,8 @@ export const favorites = async ({ clockodo }: ClockodoProp) => {
   const { projects } = await clockodo.getProjects();
   const { services } = await clockodo.getServices();
 
+  console.log(favorites);
+
   const mappedFavorites = favorites.reduce(
     (acc, favorite) => {
       const { name: customer } = customers.find(
