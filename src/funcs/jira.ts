@@ -15,19 +15,31 @@ enum Mode {
   Review = "Review",
 }
 
-export const jira = async ({ clockodo }: ClockodoProp) => {
+export const jira = async ({ 
+  clockodo, 
+  mode 
+}: ClockodoProp & { mode?: "development" | "review" }) => {
   const jiraToken = await getJiraToken();
 
-  const { mode } = await inquirer.prompt([
-    {
-      type: "list",
-      name: "mode",
-      message: "What are you doing on your current branch?",
-      choices: Object.values(Mode),
-    },
-  ]);
+  let selectedMode: Mode;
+  
+  if (mode) {
+    // If mode is provided, map it to the enum
+    selectedMode = mode === "development" ? Mode.Development : Mode.Review;
+  } else {
+    // Otherwise, prompt the user
+    const { mode: promptMode } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "mode",
+        message: "What are you doing on your current branch?",
+        choices: Object.values(Mode),
+      },
+    ]);
+    selectedMode = promptMode;
+  }
 
-  switch (mode) {
+  switch (selectedMode) {
     case Mode.Development:
       await development({ clockodo, jiraToken });
       break;
