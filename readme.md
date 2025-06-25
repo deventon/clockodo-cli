@@ -11,6 +11,9 @@
 npm install -g clockodo-cli
 ```
 
+# Requirements
+Node.js version 22 or above
+
 ## Config and setup
 
 You need to login to the application to generate and store an API key.
