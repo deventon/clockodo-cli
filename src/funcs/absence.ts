@@ -22,6 +22,7 @@ export const absence = async ({ clockodo }: ClockodoProp) => {
         { name: "Sick (child)", value: AbsenceType.SickDayOfChild },
         { name: "Holiday", value: AbsenceType.RegularHoliday },
         { name: "Overtime", value: AbsenceType.ReductionOfOvertime },
+        { name: "Education", value: AbsenceType.SchoolFurtherEducation }
       ],
     },
   ]);
