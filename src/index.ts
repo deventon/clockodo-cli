@@ -19,9 +19,9 @@ import { handleFlags } from "./funcs/flags";
 
 enum Mode {
   Jira = "Jira/Git integration",
-  Favorites = "Favorites",
-  Meeting = "Show meeting options",
+  Favorites = "Favorites", 
   Manual = "Manual clock options",
+  Meeting = "Meeting options",
   Absence = "Add absence",
   Reset = "Reset configuration",
   Exit = "Exit",
@@ -75,16 +75,26 @@ program.action(async (options) => {
 
   await handleFlags(options, clockodo);
 
-  await logWorkTimes({ clockodo });
   const runningEntry = await logRunningEntry({ clockodo });
-
+  await logWorkTimes({ clockodo });
 
   const { mode }: { mode: Mode } = await inquirer.prompt([
     {
       type: "list",
       name: "mode",
       message: "What do you want to track?",
-      choices: Object.values(Mode),
+      choices: [
+        { name: "🔗 Jira/Git integration", value: Mode.Jira },
+        { name: "⭐ Favorites", value: Mode.Favorites },
+        { name: "✏️ Manual clock options", value: Mode.Manual },
+        new inquirer.Separator("── Other Actions ──"),
+        { name: "🤝 Meeting options", value: Mode.Meeting },
+        { name: "🏖️ Add absence", value: Mode.Absence },
+        { name: "⚙️ Reset configuration", value: Mode.Reset },
+        { name: "👋 Exit", value: Mode.Exit },
+      ],
+      loop: false,
+      pageSize: 10,
     },
   ]);
   switch (mode) {
