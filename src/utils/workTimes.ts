@@ -39,15 +39,17 @@ export const logWorkTimes = async ({ clockodo }: ClockodoProp) => {
     spinner.fail(chalk.red("No running entry.\n"));
     return;
   }
-  spinner.succeed(chalk.green(`You have worked ${duration}h today.\n`));
+  spinner.succeed(chalk.green(`You have worked ${duration}h today.`));
+  console.log(); // Add newline at the end
 };
 
 export const logRunningEntry = async ({ clockodo }: ClockodoProp) => {
+  console.log(); // Add newline at the beginning
   const spinner = ora(`Fetching running entry...`).start();
   const { running } = await clockodo.getClock();
 
   if (!running) {
-    spinner.info("Welcome to Clockodo! You are currently not tracking time.\n");
+    spinner.info("Welcome to Clockodo! You are currently not tracking time.");
     return;
   }
 
@@ -63,7 +65,7 @@ export const logRunningEntry = async ({ clockodo }: ClockodoProp) => {
     chalk.magenta(
       `You are currently tracking ${
         running.text ? `'${running.text}'` : "without description"
-      } on ${customer.name} for ${duration}h.\n`
+      } on ${customer.name} for ${duration}h.`
     )
   );
 
