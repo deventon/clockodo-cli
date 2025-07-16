@@ -66,6 +66,7 @@ const development = async ({
     clockodo,
     project,
     customersId,
+    autoCreate: ticket !== undefined,
   });
 
   await clockodo.startClock({
@@ -92,6 +93,7 @@ const review = async ({
     clockodo,
     project,
     customersId,
+    autoCreate: ticket !== undefined,
   });
 
   await clockodo.startClock({
@@ -118,22 +120,25 @@ const getOrCreateProject = async ({
   clockodo,
   project,
   customersId,
-}: ClockodoProp & { project?: string; customersId: number }) => {
+  autoCreate = false,
+}: ClockodoProp & { project?: string; customersId: number; autoCreate?: boolean }) => {
   let projectsId: number | undefined;
   if (project) {
     const { projects } = await clockodo.getProjects();
     projectsId = projects?.find(({ name }) => name === project)?.id;
 
     if (!projectsId) {
-      const { createProject } = await inquirer.prompt([
-        {
-          type: "confirm",
-          name: "createProject",
-          message: `Project ${chalk.yellow(
-            project
-          )} does not exist. Do you want to create it?`,
-        },
-      ]);
+      const { createProject } = autoCreate 
+        ? { createProject: true }
+        : await inquirer.prompt([
+            {
+              type: "confirm",
+              name: "createProject",
+              message: `Project ${chalk.yellow(
+                project
+              )} does not exist. Do you want to create it?`,
+            },
+          ]);
 
       if (createProject) {
         const {
