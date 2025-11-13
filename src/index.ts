@@ -46,6 +46,7 @@ process.on("unhandledRejection", (reason: any) => {
 });
 
 program
+  .option("-s, --status", "Output current status (ticket and time worked) for machine-readable consumption")
   .option("-d, --jira-dev [ticket]", "Skip interactive mode and directly start Jira development tracking")
   .option("-t, --jira-test [ticket]", "Skip interactive mode and directly start Jira review tracking")
   .option("-r, --relog", "Delete authentication data and log in again")
