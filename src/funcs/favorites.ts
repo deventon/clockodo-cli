@@ -2,13 +2,14 @@ import { ClockodoProp } from "../types/clockodo";
 import actionSelect from "inquirer-action-select";
 import { confirm, input } from "@inquirer/prompts";
 import { getEntryData } from "./manual";
+import { getAllProjects } from "../utils/projects";
 import chalk from "chalk";
 
 export const favorites = async ({ clockodo }: ClockodoProp) => {
   const response = await clockodo.api.get("v2/favorites");
   const favorites = response.data;
   const { customers } = await clockodo.getCustomers();
-  const { projects } = await clockodo.getProjects();
+  const projects = await getAllProjects({ clockodo });
   const { services } = await clockodo.getServices();
 
   const mappedFavorites = favorites.reduce(
