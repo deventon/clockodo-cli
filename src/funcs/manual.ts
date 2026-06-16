@@ -3,6 +3,7 @@ import { ClockodoProp } from "../types/clockodo";
 import { Separator } from "@inquirer/prompts";
 import ora from "ora";
 import { ClockEditReturnType, Entry, TimeEntry } from "clockodo";
+import { getAllProjects } from "../utils/projects";
 import chalk from "chalk";
 
 enum Mode {
@@ -57,7 +58,8 @@ export const getEntryData = async ({ clockodo }: ClockodoProp) => {
     },
   ]);
 
-  const { projects } = await clockodo.getProjects({
+  const projects = await getAllProjects({
+    clockodo,
     filterCustomersId: customersId,
     filterActive: true,
   });

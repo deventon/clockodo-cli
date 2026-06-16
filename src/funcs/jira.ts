@@ -8,6 +8,7 @@ import {
   getDevelopmentServiceId,
   getTestingServiceId,
 } from "../utils/defaults";
+import { createProject, getAllProjects } from "../utils/projects";
 import chalk from "chalk";
 
 enum Mode {
@@ -124,26 +125,25 @@ const getOrCreateProject = async ({
 }: ClockodoProp & { project?: string; customersId: number; autoCreate?: boolean }) => {
   let projectsId: number | undefined;
   if (project) {
-    const { projects } = await clockodo.getProjects();
+    const projects = await getAllProjects({ clockodo });
     projectsId = projects?.find(({ name }) => name === project)?.id;
 
     if (!projectsId) {
-      const { createProject } = autoCreate 
-        ? { createProject: true }
+      const { shouldCreate } = autoCreate
+        ? { shouldCreate: true }
         : await inquirer.prompt([
             {
               type: "confirm",
-              name: "createProject",
+              name: "shouldCreate",
               message: `Project ${chalk.yellow(
                 project
               )} does not exist. Do you want to create it?`,
             },
           ]);
 
-      if (createProject) {
-        const {
-          project: { id },
-        } = await clockodo.addProject({
+      if (shouldCreate) {
+        const { id } = await createProject({
+          clockodo,
           name: project,
           customersId,
         });
