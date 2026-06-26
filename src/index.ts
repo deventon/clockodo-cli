@@ -7,7 +7,7 @@ import { meeting } from "./funcs/meeting";
 import { manual } from "./funcs/manual";
 import { absence } from "./funcs/absence";
 import { exit } from "./funcs/exit";
-import { Clockodo } from "clockodo";
+import { createClockodo } from "./utils/clockodo";
 import storage from "node-persist";
 import { reset } from "./funcs/config";
 import { jira } from "./funcs/jira";
@@ -71,7 +71,7 @@ program.action(async (options) => {
     email = loginData.email;
   }
 
-  const clockodo = new Clockodo({
+  const clockodo = createClockodo({
     client: {
       name: "Clockodo CLI",
       email,
