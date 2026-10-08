@@ -18,13 +18,13 @@ export const setClockodoData = async () => {
   ]);
 
   try {
+    // The unversioned `/apikey` endpoint has been decommissioned (HTTP 410);
+    // `/v2/apikey` replaces it and wraps the key in a `{ data }` envelope.
     const response = await axios.post(
-      "https://my.clockodo.com/api/apikey",
+      "https://my.clockodo.com/api/v2/apikey",
       {
-        autologin: false,
         email: answers.email,
         password: answers.password,
-        start_session: 1,
       },
       {
         headers: {
@@ -34,7 +34,7 @@ export const setClockodoData = async () => {
       }
     );
 
-    const apiKey = response.data.apikey;
+    const apiKey = response.data.data.api_key;
 
     await storage.setItem(Account.ApiKey, apiKey);
     await storage.setItem(Account.Email, answers.email);
@@ -52,6 +52,7 @@ export const setClockodoData = async () => {
           ]
         : "No response from server."
     );
+    process.exit(1);
   }
 };
 
