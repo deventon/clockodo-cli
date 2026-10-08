@@ -30,11 +30,18 @@ export const setClockodoData = async () => {
         headers: {
           "Content-Type": "application/json",
           "X-Requested-With": "XMLHttpRequest",
+          // Mandatory for API-key requests; without it the API answers with
+          // HTTP 200 and an error body instead of the key.
+          "X-Clockodo-External-Application": `Clockodo CLI;${answers.email}`,
         },
       }
     );
 
-    const apiKey = response.data.data.api_key;
+    const apiKey = response.data?.data?.api_key;
+
+    if (!apiKey) {
+      throw new Error(response.data?.message ?? "No API key in response.");
+    }
 
     await storage.setItem(Account.ApiKey, apiKey);
     await storage.setItem(Account.Email, answers.email);
@@ -50,7 +57,9 @@ export const setClockodoData = async () => {
             error.response.data.errors,
             error.response.data.message,
           ]
-        : "No response from server."
+        : error.request
+          ? "No response from server."
+          : error.message
     );
     process.exit(1);
   }
